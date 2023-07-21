@@ -1,0 +1,14 @@
+
+openai
+regex
+tqdm
+pydantic
+fastapi
+google-api-python-client 
+google-auth-httplib2 
+google-auth-oauthlib
+requests-cache
+python-dotenv
+uvicorn
+oauth2client
+tiktoken
