@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scammer Comments</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #007bff;
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .icon {
+      display: block;
+      margin: 0 auto;
+      max-width: 100px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    form {
+      text-align: center;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 0.5rem;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    input[type="submit"] {
+      padding: 0.5rem 1rem;
+      font-size: 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+
+    .result {
+      margin-top: 2rem;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 1rem;
+    }
+
+    .result h4 {
+      margin-top: 0;
+    }
+
+    .result ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .result li {
+      margin-bottom: 1rem;
+    }
+
+    .result strong {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="{{ url_for('static', path='dog.png') }}" class="icon" alt="Dog Icon" />
+    <h1>Scammer Comments</h1>
+  </header>
+
+  <div class="container">
+    <form action="/" method="post">
+      <input type="text" name="video_url" placeholder="Paste a Youtube video URL" required>
+      <input type="submit" value="Get Scammer IDs">
+    </form>
+
+    {% if result %}
+    <div class="result">
+      <h4>Scammer Information:</h4>
+      <ul>
+        {% for authorChannelId, comments in result.items() %}
+          <li>
+            <strong>Author Channel ID:</strong> {{ authorChannelId }}
+            <ul>
+              {% for comment in comments %}
+                <li>{{ comment }}</li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

@@ -1,9 +1,8 @@
-/.env
+*.env
 /.vscode
-/app_spam.py
 /archive
 /comments.json
 /demo_cache.sqlite
 /tests
-/venv_comment_moderation
-/__pycache__
+/venv_*
+*__pycache__*

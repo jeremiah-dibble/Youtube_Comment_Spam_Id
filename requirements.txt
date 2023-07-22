@@ -12,3 +12,5 @@ python-dotenv
 uvicorn
 oauth2client
 tiktoken
+python-multipart
+jinja2

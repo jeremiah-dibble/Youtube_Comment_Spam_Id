@@ -1,10 +1,7 @@
-import json
-import os
 import re
-from pathlib import Path
 
-import requests
 from dotenv import load_dotenv
+from googleapiclient.discovery import build
 from pydantic import BaseModel
 
 load_dotenv()
@@ -37,7 +34,8 @@ def get_youtube_comments(
 ) -> list[CommentThread]:
     comments = []
 
-    base_url = "https://www.googleapis.com/youtube/v3/commentThreads"
+    # base_url = "https://www.googleapis.com/youtube/v3/commentThreads"
+    youtube = build("youtube", "v3", developerKey=api_key)
     params = {
         "key": api_key,
         "videoId": video_id,
@@ -47,10 +45,12 @@ def get_youtube_comments(
     }
 
     while len(comments) < total_results:
-        response = requests.get(base_url, params=params)
-        video_response = response.json()
-
-        for item in video_response["items"]:
+        # response = requests.get(base_url, params=params)
+        response = youtube.commentThreads().list(**params).execute()
+        # video_response = response.json()
+        # print('video_response', video_response)
+        # for item in video_response["items"]:
+        for item in response.get("items", []):
             replies = []
             if "replies" in item.keys():
                 replies = [
@@ -70,22 +70,12 @@ def get_youtube_comments(
                 )
             )
 
-        if "nextPageToken" in video_response:
-            params["pageToken"] = video_response["nextPageToken"]
+        if "nextPageToken" in response.keys():
+            params["pageToken"] = response.get("nextPageToken")
         else:
             break
 
     return comments
 
 
-if __name__ == "__main__":
-    dev_key = os.getenv("YOUTUBE_API_KEY")
-    video_url = "https://www.youtube.com/watch?v=j4yXw7NBzbY&t=878s"
-    comments = get_youtube_comments(dev_key, extract_video_id(video_url))
-    # save comments to json file
 
-    Path("comments.json", "w").write_text(
-        json.dumps(list(map(lambda x: x.model_dump(), comments)), indent=4)
-    )
-
-    print(comments)
