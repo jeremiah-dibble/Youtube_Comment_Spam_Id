@@ -6,3 +6,4 @@
 /tests
 /venv_*
 *__pycache__*
+*secret*

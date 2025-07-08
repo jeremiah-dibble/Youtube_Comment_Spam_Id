@@ -19,7 +19,6 @@ class Reply(Comment):
 class CommentThread(Comment):
     replies: list[Reply]
 
-
 def extract_video_id(url: str):
     pattern = r"(?:https?:\/\/)?(?:www\.)?youtu(?:be\.com\/(?:watch\?.*v=|embed\/)|\.be\/)([\w\-]+)(?:.*)"
     match = re.match(pattern, url)
