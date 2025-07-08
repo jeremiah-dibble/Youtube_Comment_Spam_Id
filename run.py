@@ -1,10 +1,10 @@
 import logging
-import subprocess
+from app.ban_db import init_db
+from app import create_app
 
-def run_uvicorn():
-    uvicorn_command = "uvicorn main:app --reload"
-    subprocess.run(uvicorn_command, shell=True)
+app = create_app()
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    run_uvicorn()
+    init_db()
+    app.run(debug=True, host="127.0.0.1", port=5000)

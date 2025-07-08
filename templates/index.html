@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +30,8 @@
     .icon {
       display: block;
       margin: 0 auto;
-      max-width: 300px; /* Original max-width was 100px, now set to 300px */
+      max-width: 300px;
+      /* Original max-width was 100px, now set to 300px */
     }
 
     h1 {
@@ -88,37 +90,105 @@
     .result strong {
       font-weight: bold;
     }
+
+    .flashes {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .flashes li {
+      padding: 0.5rem;
+      margin-bottom: 0.5rem;
+      border-radius: 5px;
+    }
+
+    .flashes .error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .flashes .success {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <img src="{{ url_for('static', path='youtube-logo-9.png') }}" class="icon" alt="Youtbe Icon" />
     <h1>Scammer Comments</h1>
+    <p style="font-size:1.1em; margin-top:0.5em;">Log in, paste a YouTube video URL, and this tool will automatically
+      detect and ban/delete scam comments for you.</p>
   </header>
 
   <div class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <ul class="flashes">
+      {% for category, message in messages %}
+      <li class="{{ category }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+    {% if not authorized %}
+    <div style="text-align:center; margin:2em 0;">
+      <a href="/authorize"
+        style="font-size:1.2em; font-weight:bold; color:#fff; background:#007bff; padding:0.7em 1.5em; border-radius:6px; text-decoration:none;">Authorize
+        with YouTube</a>
+    </div>
+    {% else %}
     <form action="/" method="post">
       <input type="text" name="video_url" placeholder="Paste a Youtube video URL" required>
       <input type="submit" value="Get Scammer IDs">
     </form>
-
+    <div style="text-align:center; margin:1em 0;">
+      <a href="/logout" style="font-size:1em; color:#007bff; text-decoration:underline;">Logout</a>
+    </div>
+    <div style="text-align:center; margin:1em 0;">
+      <a href="/bans" style="font-size:1em; color:#007bff; text-decoration:underline;">View Your Bans</a>
+    </div>
     {% if result %}
     <div class="result">
-      <h4>Scammer Information:</h4>
-      <ul>
-        {% for authorChannelId, comments in result.items() %}
-          <li>
-            <strong>Author Channel ID:</strong> {{ authorChannelId }}
-            <ul>
-              {% for comment in comments %}
-                <li>{{ comment }}</li>
-              {% endfor %}
-            </ul>
-          </li>
+      <h4>Spam Moderation Actions:</h4>
+      <table style="width:100%; border-collapse:collapse;">
+        <tr>
+          <th style="border:1px solid #ccc; padding:8px;">Comment</th>
+          <th style="border:1px solid #ccc; padding:8px;">Banned</th>
+          <th style="border:1px solid #ccc; padding:8px;">Deleted</th>
+        </tr>
+        {% for action in result %}
+        <tr>
+          <td style="border:1px solid #ccc; padding:8px;">{{ action.comment }}</td>
+          <td style="border:1px solid #ccc; padding:8px;">{{ '✅' if action.ban else '❌' }}</td>
+          <td style="border:1px solid #ccc; padding:8px;">{{ '✅' if action.delete else '❌' }}</td>
+        </tr>
         {% endfor %}
-      </ul>
+      </table>
     </div>
+    {% endif %}
     {% endif %}
   </div>
 </body>
+
 </html>
